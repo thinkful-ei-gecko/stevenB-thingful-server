@@ -243,7 +243,8 @@ function seedUsers(db, users) {
     .then( () => {
       db.raw(
         'SELECT setval(\'thingful_users_id_seq\', ?)',
-        [users[users.length - 1].id]);
+        [users[users.length - 1].id]
+      );
     });
 }
 
@@ -253,14 +254,14 @@ function seedThingsTables(db, users, things, reviews=[]) {
     await trx.into('thingful_things').insert(things);
 
     await trx.raw(
-      'SELECT setval(\'blogful_things_id_seq\', ?)',
+      'SELECT setval(\'thingful_things_id_seq\', ?)',
       [things[things.length - 1].id]
     );
 
     if (reviews.length) {
       await trx.into('thingful_reviews').insert(reviews);
       await trx.raw(
-        'SELECT setval(\'blogful_comments_id_seq\', ?)',
+        'SELECT setval(\'thingful_reviews_id_seq\', ?)',
         [reviews[reviews.length - 1].id],
       );
     }

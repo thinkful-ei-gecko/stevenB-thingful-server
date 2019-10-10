@@ -2,7 +2,7 @@ const knex = require('knex');
 const app = require('../src/app');
 const helpers = require('./test-helpers');
 
-describe('Things Endpoints', function() {
+describe.only('Things Endpoints', function() {
   let db;
 
   const {
@@ -21,18 +21,13 @@ describe('Things Endpoints', function() {
 
   after('disconnect from db', () => db.destroy());
 
-  before('cleanup', () => helpers.cleanTables(db));
+  beforeEach('cleanup', () => helpers.cleanTables(db));
 
   afterEach('cleanup', () => helpers.cleanTables(db));
 
   describe('Protected endpoints', () => {
     beforeEach('insert things', () => {
-      helpers.seedThingsTables(
-        db,
-        testUsers,
-        testThings,
-        testReviews
-      );
+      helpers.seedUsers(db, testUsers);
     });
 
     describe('GET /api/things/:things_id', () => {
@@ -43,7 +38,7 @@ describe('Things Endpoints', function() {
       });
 
       it('responds with 401 \'Unauthorized request\' when no credentials', () => {
-        const noUserCreds = { user_name: '', password: '' };
+        const noUserCreds = [{ user_name: '', password: '' }];
 
         return supertest(app)
           .get('/api/things/123')
@@ -52,8 +47,8 @@ describe('Things Endpoints', function() {
       });
 
       it('responds 401 \'Unauthorized request\' when invalid user credentials', () => {
-        const invalidUserCreds = { user_name: 'invalid', password: 'invalid' };
-
+        const invalidUserCreds = [{ user_name: 'invalid', password: 'invalid' }];
+        
         return supertest(app)
           .get('/api/things/1')
           .set('Authorization', helpers.makeAuthHeader(invalidUserCreds))
@@ -133,7 +128,7 @@ describe('Things Endpoints', function() {
 
   describe('GET /api/things/:thing_id', () => {
     context('Given no things', () => {
-      before(() => helpers.seedUsers(db, testUsers));
+      beforeEach(() => helpers.seedUsers(db, testUsers));
 
       it('responds with 404', () => {
         const thingId = 123456;
@@ -199,7 +194,7 @@ describe('Things Endpoints', function() {
 
   describe('GET /api/things/:thing_id/reviews', () => {
     context('Given no things', () => {
-      before( () => helpers.seedUsers(db, testUsers));
+      beforeEach( () => helpers.seedUsers(db, testUsers));
 
       it('responds with 404', () => {
         const thingId = 123456;
