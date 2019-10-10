@@ -26,9 +26,14 @@ describe.only('Things Endpoints', function() {
   afterEach('cleanup', () => helpers.cleanTables(db));
 
   describe('Protected endpoints', () => {
-    beforeEach('insert things', () => {
-      helpers.seedUsers(db, testUsers);
-    });
+    beforeEach('insert things', () =>
+      helpers.seedThingsTables(
+        db,
+        testUsers,
+        testThings,
+        testReviews,
+      )
+    );
 
     describe('GET /api/things/:things_id', () => {
       it('responds with 401 \'Missing basic token\' when no basic token', () => {
