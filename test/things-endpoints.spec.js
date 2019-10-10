@@ -2,7 +2,7 @@ const knex = require('knex');
 const app = require('../src/app');
 const helpers = require('./test-helpers');
 
-describe.only('Things Endpoints', function() {
+describe('Things Endpoints', function() {
   let db;
 
   const {
@@ -199,6 +199,8 @@ describe.only('Things Endpoints', function() {
 
   describe('GET /api/things/:thing_id/reviews', () => {
     context('Given no things', () => {
+      before( () => db.from('thingful_users').insert(testUsers));
+
       it('responds with 404', () => {
         const thingId = 123456;
         return supertest(app)
