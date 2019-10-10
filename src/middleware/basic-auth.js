@@ -21,7 +21,7 @@ function requireAuth(req, res, next) {
     .where({ user_name: tokenUserName })
     .first()
     .then( user => {
-      if (!user) {
+      if (!user || user.password !== tokenPassword) {
         return res.status(401).json({ error: 'Unauthorized request' });
       }
       console.log('I ran!');

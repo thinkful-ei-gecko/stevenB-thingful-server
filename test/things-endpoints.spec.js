@@ -64,6 +64,15 @@ describe('Things Endpoints', function() {
           .set('Authorization', makeAuthHeader(invalidUserCreds))
           .expect(401, { error: 'Unauthorized request' });
       });
+
+      it('responds 401 \'Unauthorized request\' when invalid password', () => {
+        const invalidPassword = { user_name: testUsers[0].user_name, password: 'invalid' };
+
+        return supertest(app)
+          .get('/api/things/1')
+          .set('Authorization', makeAuthHeader(invalidPassword))
+          .expect(401, { error: 'Unauthorized request' });
+      });
     });
   });
 
@@ -130,7 +139,7 @@ describe('Things Endpoints', function() {
   describe.only('GET /api/things/:thing_id', () => {
     context('Given no things', () => {
       before(() => db.into('thingful_users').insert(testUsers));
-      
+
       it('responds with 404', () => {
         const thingId = 123456;
         return supertest(app)
