@@ -17,7 +17,17 @@ function requireAuth(req, res, next) {
     return res.status(401).json({ error: 'Unauthorized request' });
   }
   
-  next();
+  req.app.get('db')('thingful_users')
+    .where({ user_name: tokenUserName })
+    .first()
+    .then( user => {
+      if (!user) {
+        return res.status(401).json({ error: 'Unauthorized request' });
+      }
+      console.log('I ran!');
+      next();
+    })
+    .catch(next);
 }
 
 module.exports = { requireAuth };
