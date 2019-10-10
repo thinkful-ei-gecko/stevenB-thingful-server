@@ -243,7 +243,7 @@ function seedUsers(db, users) {
   return db.into('thingful_users').insert(preppedUsers)
     .then( () => {
       db.raw(
-        'SELECT setval(\'thingful_users_id_seq\', ?)',
+        `SELECT setval('thingful_users_id_seq', ?)`,
         [users[users.length - 1].id]
       );
     });
