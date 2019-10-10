@@ -2,13 +2,8 @@ const knex = require('knex');
 const app = require('../src/app');
 const helpers = require('./test-helpers');
 
-describe('Things Endpoints', function() {
+describe.only('Things Endpoints', function() {
   let db;
-
-  function makeAuthHeader(user) {
-    const token = Buffer.from(`${user.user_name}:${user.password}`).toString('base64');
-    return `Basic ${token}`;
-  }
 
   const {
     testUsers,
@@ -30,7 +25,7 @@ describe('Things Endpoints', function() {
 
   afterEach('cleanup', () => helpers.cleanTables(db));
 
-  describe.only('Protected endpoints', () => {
+  describe('Protected endpoints', () => {
     beforeEach('insert things', () => {
       helpers.seedThingsTables(
         db,
@@ -52,7 +47,7 @@ describe('Things Endpoints', function() {
 
         return supertest(app)
           .get('/api/things/123')
-          .set('Authorization', makeAuthHeader(noUserCreds))
+          .set('Authorization', helpers.makeAuthHeader(noUserCreds))
           .expect(401, { error: 'Unauthorized request' });
       });
 
@@ -61,7 +56,7 @@ describe('Things Endpoints', function() {
 
         return supertest(app)
           .get('/api/things/1')
-          .set('Authorization', makeAuthHeader(invalidUserCreds))
+          .set('Authorization', helpers.makeAuthHeader(invalidUserCreds))
           .expect(401, { error: 'Unauthorized request' });
       });
 
@@ -70,7 +65,7 @@ describe('Things Endpoints', function() {
 
         return supertest(app)
           .get('/api/things/1')
-          .set('Authorization', makeAuthHeader(invalidPassword))
+          .set('Authorization', helpers.makeAuthHeader(invalidPassword))
           .expect(401, { error: 'Unauthorized request' });
       });
     });
@@ -136,7 +131,7 @@ describe('Things Endpoints', function() {
     });
   });
 
-  describe.only('GET /api/things/:thing_id', () => {
+  describe('GET /api/things/:thing_id', () => {
     context('Given no things', () => {
       before(() => db.into('thingful_users').insert(testUsers));
 
@@ -144,7 +139,7 @@ describe('Things Endpoints', function() {
         const thingId = 123456;
         return supertest(app)
           .get(`/api/things/${thingId}`)
-          .set('Authorization', makeAuthHeader(testUsers[0]))
+          .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .expect(404, { error: 'Thing doesn\'t exist' });
       });
     });
@@ -169,7 +164,7 @@ describe('Things Endpoints', function() {
 
         return supertest(app)
           .get(`/api/things/${thingId}`)
-          .set('Authorization', makeAuthHeader(testUsers[0]))
+          .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .expect(200, expectedThing);
       });
     });
@@ -192,7 +187,7 @@ describe('Things Endpoints', function() {
       it('removes XSS attack content', () => {
         return supertest(app)
           .get(`/api/things/${maliciousThing.id}`)
-          .set('Authorization', makeAuthHeader(testUser))
+          .set('Authorization', helpers.makeAuthHeader(testUser))
           .expect(200)
           .expect(res => {
             expect(res.body.title).to.eql(expectedThing.title);
@@ -208,6 +203,7 @@ describe('Things Endpoints', function() {
         const thingId = 123456;
         return supertest(app)
           .get(`/api/things/${thingId}/reviews`)
+          .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .expect(404, { error: 'Thing doesn\'t exist' });
       });
     });
@@ -230,6 +226,7 @@ describe('Things Endpoints', function() {
 
         return supertest(app)
           .get(`/api/things/${thingId}/reviews`)
+          .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
           .expect(200, expectedReviews);
       });
     });
