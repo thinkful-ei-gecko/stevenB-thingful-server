@@ -21,9 +21,15 @@ authRouter
         if (!dbUser) {
           return res.status(400).json({ error: 'Incorrect user_name or password' });
         }
+        AuthService.comparePasswords(loginUser.password, dbUser.password)
+          .then( passwordsMatch => {
+            if (!passwordsMatch) {
+              return res.status(400).json({ error: 'Incorrect user_name or password' });
+            }
 
-        res.send('ok');
+            res.send('ok');
+          });
       });
   });
 
-  module.exports = authRouter;
+module.exports = authRouter;
