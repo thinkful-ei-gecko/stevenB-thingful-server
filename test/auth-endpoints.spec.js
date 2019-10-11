@@ -5,7 +5,7 @@ const helpers = require('./test-helpers');
 describe.only('Auth Endpoints', function() {
   let db;
 
-  const { testUsers } = helpers.makeArticlesFixtures();
+  const { testUsers } = helpers.makeThingsFixtures();
   const testUser = testUsers[0];
 
   before('make knex instance', () => {
