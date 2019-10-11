@@ -36,7 +36,7 @@ describe.only('Things Endpoints', function() {
     );
 
     describe('GET /api/things/:things_id', () => {
-      it('responds with 401 \'Missing basic token\' when no basic token', () => {
+      it('responds with 401 \'Missing basic token\' when no bearer token', () => {
         return supertest(app)
           .get('/api/things/123')
           .expect(401, { error: 'Missing bearer token' });
