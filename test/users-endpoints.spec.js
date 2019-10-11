@@ -37,7 +37,7 @@ describe.only('Users Endpoints', () => {
           nickname: 'test nickname'
         };
 
-        it(`responds with 400 required error when '${field} is missing`, () => {
+        it(`responds with 400 required error when '${field}' is missing`, () => {
           delete registerAttemptBody[field];
 
           return supertest(app)
