@@ -6,6 +6,7 @@ describe.only('Users Endpoints', () => {
   let db;
 
   const { testUsers } = helpers.makeThingsFixtures();
+  const testUser = testUsers[0];
 
   before('make knex instance', () => {
     db = knex({
@@ -47,33 +48,83 @@ describe.only('Users Endpoints', () => {
               error: `Missing '${field}' in request body` 
             });
         });
+      });
 
-        it('responds with 400 \'Password must be longer than 8 characters\' when empty password', () => {
-          const userShortPassword = {
-            full_name: 'test full_name',
-            user_name: 'test user_name',
-            password: '1234567',
-          };
+      it('responds with 400 \'Password must be longer than 8 characters\' when empty password', () => {
+        const userShortPassword = {
+          full_name: 'test full_name',
+          user_name: 'test user_name',
+          password: '1234567',
+        };
 
-          return supertest(app)
-            .post('/api/users')
-            .send(userShortPassword)
-            .expect(400, { error: 'Password must be longer than 8 characters'});
-        });
+        return supertest(app)
+          .post('/api/users')
+          .send(userShortPassword)
+          .expect(400, { error: 'Password must be longer than 8 characters'});
+      });
 
-        it('responds with 400 \'Password must be less than 72 characters\' when empty password', () => {
-          const userShortPassword = {
-            full_name: 'test full_name',
-            user_name: 'test user_name',
-            password: '3'.repeat(73),
-          };
+      it('responds with 400 \'Password must be less than 72 characters\' when empty password', () => {
+        const userLongPassword = {
+          full_name: 'test full_name',
+          user_name: 'test user_name',
+          password: '3'.repeat(73),
+        };
 
-          return supertest(app)
-            .post('/api/users')
-            .send(userShortPassword)
-            .expect(400, { error: 'Password must be less than 72 characters'});
-        });
+        return supertest(app)
+          .post('/api/users')
+          .send(userLongPassword)
+          .expect(400, { error: 'Password must be less than 72 characters'});
+      });
 
+      it('responds with 400 \'Password must not start with or end with a space\' when empty password', () => {
+        const userPassword = {
+          full_name: 'test full_name',
+          user_name: 'test user_name',
+          password: ' 12345678',
+        };
+
+        return supertest(app)
+          .post('/api/users')
+          .send(userPassword)
+          .expect(400, { error: 'Password must not start with or end with a space'});
+      });
+
+      it('responds with 400 \'Password must not start with or end with a space\' when empty password', () => {
+        const userPassword = {
+          full_name: 'test full_name',
+          user_name: 'test user_name',
+          password: '12345678 ',
+        };
+
+        return supertest(app)
+          .post('/api/users')
+          .send(userPassword)
+          .expect(400, { error: 'Password must not start with or end with a space'});
+      });
+
+      it('responds 400 error when password isn\'t complex enough', () => {
+        const userPasswordNotComplex = {
+          user_name: 'test user_name',
+          password: '11AAaabb',
+          full_name: 'test full_name',
+        };
+
+        return supertest(app)
+          .post('/api/users')
+          .send(userPasswordNotComplex)
+          .expect(400, { error: 'Password must contain 1 upper case, lower case, number and special character' });
+      });
+
+      it(`responds 400 'User name already taken' when user_name isn't unique`, () => {
+        const duplicateUser = {
+          user_name: testUser.user_name,
+          password: '11AAaa!!',
+          full_name: 'test full_name',
+        };
+        return supertest(app)
+          .post('/api/users')
+          .send(duplicateUser)
+          .expect(400, { error: `Username already taken` });
       });
     });
   });
