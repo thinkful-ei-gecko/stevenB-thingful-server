@@ -115,7 +115,7 @@ describe.only('Users Endpoints', () => {
           .expect(400, { error: 'Password must contain 1 upper case, lower case, number and special character' });
       });
 
-      it(`responds 400 'User name already taken' when user_name isn't unique`, () => {
+      it('responds 400 \'User name already taken\' when user_name isn\'t unique', () => {
         const duplicateUser = {
           user_name: testUser.user_name,
           password: '11AAaa!!',
@@ -124,7 +124,7 @@ describe.only('Users Endpoints', () => {
         return supertest(app)
           .post('/api/users')
           .send(duplicateUser)
-          .expect(400, { error: `Username already taken` });
+          .expect(400, { error: 'Username already taken' });
       });
     });
   });

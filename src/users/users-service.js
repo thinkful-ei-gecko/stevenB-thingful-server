@@ -16,7 +16,12 @@ const UsersService = {
       return 'Password must contain 1 upper case, lower case, number and special character';
     }
   },
-
+  hasUserWithUserName(db, user_name) {
+    return db('thingful_users')
+      .where({ user_name })
+      .first()
+      .then( user => !!user );
+  }
 };
 
 module.exports = UsersService;
