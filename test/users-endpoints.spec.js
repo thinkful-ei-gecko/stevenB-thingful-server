@@ -31,9 +31,9 @@ describe.only('Users Endpoints', () => {
 
       requiredFields.forEach( field => {
         const registerAttemptBody = {
+          full_name: 'test full_name',
           user_name: 'test user_name',
           password: 'test password',
-          full_name: 'test full_name',
           nickname: 'test nickname'
         };
 
