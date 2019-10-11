@@ -47,6 +47,33 @@ describe.only('Users Endpoints', () => {
               error: `Missing '${field}' in request body` 
             });
         });
+
+        it('responds with 400 \'Password must be longer than 8 characters\' when empty password', () => {
+          const userShortPassword = {
+            full_name: 'test full_name',
+            user_name: 'test user_name',
+            password: '1234567',
+          };
+
+          return supertest(app)
+            .post('/api/users')
+            .send(userShortPassword)
+            .expect(400, { error: 'Password must be longer than 8 characters'});
+        });
+
+        it('responds with 400 \'Password must be less than 72 characters\' when empty password', () => {
+          const userShortPassword = {
+            full_name: 'test full_name',
+            user_name: 'test user_name',
+            password: '3'.repeat(73),
+          };
+
+          return supertest(app)
+            .post('/api/users')
+            .send(userShortPassword)
+            .expect(400, { error: 'Password must be less than 72 characters'});
+        });
+
       });
     });
   });
