@@ -21,6 +21,13 @@ const UsersService = {
       .where({ user_name })
       .first()
       .then( user => !!user );
+  },
+  insertUser(db, newUser) {
+    return db
+      .insert(newUser)
+      .into('thingful_users')
+      .returning('*')
+      .then( ([user]) => user);
   }
 };
 
